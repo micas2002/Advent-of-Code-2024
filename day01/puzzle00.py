@@ -16,7 +16,6 @@ def myFunction():
 	for i in range(len(input1)):
 		input1[i] = input1[i].split("   ")
 
-
 	list1 = []
 	list2 = []
 	
