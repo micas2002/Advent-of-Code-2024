@@ -1,4 +1,4 @@
-control = 0
+import copy
 
 # checks decrease sequence
 def checkDecrease(numbers):
@@ -6,14 +6,8 @@ def checkDecrease(numbers):
 	while i in range(len(numbers)):
 		if (i == len(numbers) - 1):
 			break
-		# check if first numbers is lesses than the second and checks if the second number is in the correct range
-		if numbers[i] < numbers[i + 1] or numbers[i + 1] not in range(numbers[i] - 3, numbers[i]):
-			global control
-			if control != 1:
-				control = 1
-				numbers.pop(i)
-				i = 0
-				isSafe(numbers)
+
+		if numbers[i] < numbers[i + 1] or numbers[i] - numbers[i + 1] > 3:
 			return 0
 		i += 1
 	return 1
@@ -24,28 +18,40 @@ def checkIncrease(numbers):
 	while i in range(len(numbers)):
 		if (i == len(numbers) - 1):
 			break
-		# check if first numbers is greater than the second and checks if the second number is in the correct range
-		if numbers[i] > numbers[i + 1] or numbers[i + 1] not in range(numbers[i] + 1, numbers[i] + 4):
-			global control
-			if control != 1:
-				control = 1
-				numbers.pop(i)
-				i = 0
-				isSafe(numbers)
+
+		if numbers[i] > numbers[i + 1] or numbers[i + 1] - numbers[i] > 3:
 			return 0
 		i += 1
 	return 1
 
 # check if sequence in initialy increasing or decreasing
 def	isSafe(numbers):
-	if numbers[0] > numbers[1]:
-		return checkDecrease(numbers)
-	elif numbers[0] < numbers[1]:
-		return checkIncrease(numbers)
-	else:
-		return 0
+	result = 0
+	numbersValue = copy.deepcopy(numbers) # deep copy
 
-# get input from user
+	# check complete list
+	if numbers[0] > numbers[1]:
+		result = checkDecrease(numbers)
+	elif numbers[0] < numbers[1]:
+		result = checkIncrease(numbers)	
+
+	if result == 1: 
+		return True
+
+	# check list removing one number at a time
+	for i in range(len(numbers)):
+		numbersValue.pop(i)
+		if numbersValue[0] > numbersValue[1]:
+			result = checkDecrease(numbersValue)
+		elif numbersValue[0] < numbersValue[1]:
+			result = checkIncrease(numbersValue)
+		numbersValue = copy.deepcopy(numbers)
+		if result == 1:
+			return True
+
+	return False
+
+# get input from file
 def getInput():
 	contents = []
 	while True:
@@ -62,7 +68,7 @@ def myFunction():
 	safe = 0
 	for i in input1:
 		control = 1
-		numbers = i.split()
+		numbers = i.split() # split input into list of numbers
 		numbers =  [int(number) for number in numbers]
 		safe += isSafe(numbers)
 	
